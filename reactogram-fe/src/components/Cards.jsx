@@ -26,7 +26,7 @@ const Cards = () => {
             </div>
             <div className='col-4 d-flex align-content-center justify-content-end'>
               <button type='button' className='btn btn-link text-muted   '>
-                <i class='fa-solid fa-ellipsis-vertical'></i>
+                <i className='fa-solid fa-ellipsis-vertical'></i>
               </button>
             </div>
           </div>
@@ -50,7 +50,7 @@ const Cards = () => {
               </div>
               <div className='me-1'>
                 <button type='button' className=' card-icons'>
-                  <i class='fa fa-regular fa-comment'></i>
+                  <i className='fa fa-regular fa-comment'></i>
                 </button>
               </div>
               <div className='me-5'>

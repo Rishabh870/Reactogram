@@ -6,7 +6,7 @@ const Navbar = () => {
   return (
     <div className='nav-shadow'>
       <nav className='navbar navbar-light bg-light '>
-        <nav class='container-fluid'>
+        <nav className='container-fluid'>
           <a className='navbar-brand ms-5'>
             <img src={logo} alt='logo' height='45px' />
           </a>
@@ -18,14 +18,14 @@ const Navbar = () => {
               aria-label='Search'
             />
 
-            <a class='nav-link fs-5' href='#'>
-              <i class='fa-solid fa-house'></i>
+            <a className='nav-link fs-5' href='#'>
+              <i className='fa-solid fa-house'></i>
             </a>
-            <a class='nav-link fs-5' href='#'>
-              <i class='fa-regular fa-heart '></i>
+            <a className='nav-link fs-5' href='#'>
+              <i className='fa-regular fa-heart '></i>
             </a>
-            <a class='nav-link fs-5' href='#'>
-              <i class='fa-solid fa-circle-user'></i>
+            <a className='nav-link fs-5' href='#'>
+              <i className='fa-solid fa-circle-user'></i>
             </a>
           </form>
         </nav>
