@@ -1,0 +1,56 @@
+.login-container {
+  font-family: 'Poppins', sans-serif;
+  margin-top: 13rem;
+}
+.input-bg {
+  background-color: #f3f3f3;
+  color: #dbd5d5;
+  font-size: 0.9rem;
+  font-family: 'Mochiy Pop One', sans-serif;
+  height: 2.9rem;
+}
+
+.custom-btn {
+  padding: 0.6rem;
+  border-radius: 4px;
+}
+.custom-btn-primary {
+  border: 1px solid #b3e0ff;
+  background-color: #b3e0ff;
+  width: 100%;
+  color: #fff;
+}
+.custom-sign {
+  padding: 0.6rem;
+  border: 1px solid #4e4e4e;
+  border-radius: 4px;
+  background-color: #fff;
+  width: 100%;
+}
+.socialMobile {
+  display: none;
+}
+.socialDesktop {
+  display: block;
+}
+
+@media only screen and (max-width: 450px) {
+  .socialDesktop {
+    display: none;
+  }
+  .socialMobile {
+    display: block;
+  }
+  .login-container {
+    margin-top: 8rem;
+  }
+  .card {
+    border: none !important;
+  }
+  .card-body {
+    padding: 1.5rem 1.4rem !important;
+  }
+  .shadow {
+    box-shadow: none !important;
+  }
+}
