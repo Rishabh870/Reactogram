@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import Modal from 'react-bootstrap/Modal';
+import { Modal, Dropdown, ToggleButton, DropdownButton } from 'react-bootstrap';
 
 import '../pages/profile.css';
+import DropdownToggle from 'react-bootstrap/esm/DropdownToggle';
 
 const Profile = () => {
   const [show, setShow] = useState(false);
@@ -19,7 +20,6 @@ const Profile = () => {
               alt='Profile Photo'
               width='150'
               height='150'
-              srcset=''
             />
             <div className='my-4 mx-2'>
               <p className='fw-bold'>Rishu_870</p>
@@ -153,29 +153,28 @@ const Profile = () => {
 
         <Modal show={show} onHide={handleClose} size='lg'>
           <Modal.Header closeButton>
-            <div class='dropdown'>
-              <button
-                class='btn btn-secondary '
-                type='button'
-                data-bs-toggle='dropdown'
-                aria-expanded='false'
+            <Dropdown>
+              <Dropdown.Toggle
+                variant='transparent'
+                id='dropdown-basic'
+                toggleIcon={false}
               >
-                <i class='fa-solid fa-ellipsis'></i>
-              </button>
-              <ul class='dropdown-menu'>
-                <li>
-                  <a class='dropdown-item' href='#'>
-                    Action
-                  </a>
-                </li>
-                <li>
-                  <a class='dropdown-item' href='#'>
-                    Another action
-                  </a>
-                </li>
-              </ul>
-            </div>
+                <i className='fa-solid fa-ellipsis'></i>
+              </Dropdown.Toggle>
+
+              <Dropdown.Menu>
+                <Dropdown.Item>
+                  <i className='fa-solid fa-pen-to-square pe-2'></i>
+                  Edit Post
+                </Dropdown.Item>
+                <Dropdown.Item>
+                  <i class='fa fa-trash pe-2'></i>
+                  Delete Post
+                </Dropdown.Item>
+              </Dropdown.Menu>
+            </Dropdown>
           </Modal.Header>
+
           <Modal.Body>
             <div className='row'>
               <div className='col-md-6'>
