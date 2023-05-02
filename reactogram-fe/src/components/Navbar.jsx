@@ -1,6 +1,6 @@
 import React from 'react';
 import logo from '../images/logo.PNG';
-import { Link } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import './navbar.css';
 const Navbar = () => {
   return (
@@ -24,9 +24,9 @@ const Navbar = () => {
             <a className='nav-link fs-5' href='#'>
               <i className='fa-regular fa-heart '></i>
             </a>
-            <a className='nav-link fs-5' href='#'>
+            <NavLink to='/myprofile' className='nav-link fs-5' href='#'>
               <i className='fa-solid fa-circle-user'></i>
-            </a>
+            </NavLink>
           </form>
         </nav>
       </nav>
