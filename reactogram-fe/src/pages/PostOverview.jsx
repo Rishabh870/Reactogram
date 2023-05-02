@@ -3,7 +3,7 @@ import Cards from '../components/Cards';
 
 const PostOverview = () => {
   return (
-    <div className=' '>
+    <div className=' d-flex justify-content-center '>
       <Cards />
       <Cards />
       <Cards />
