@@ -8,7 +8,7 @@ const Navbar = () => {
   return (
     <div className='nav-shadow'>
       <nav className='navbar navbar-light bg-light '>
-        <nav className='container-fluid'>
+        <nav className='container-fluid px-sm-2'>
           <NavLink to='/' className='navbar-brand m-0 ms-md-5'>
             <img src={logo} alt='logo' height='45px' />
           </NavLink>

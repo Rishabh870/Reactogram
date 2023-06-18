@@ -11,3 +11,7 @@
 .nav-shadow {
   box-shadow: 0px 4px 7px rgb(182, 182, 182);
 }
+
+.container-fluid {
+  padding: 0 10px;
+}

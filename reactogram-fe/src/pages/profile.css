@@ -7,3 +7,59 @@
 .dropdown-toggle::after {
   display: none !important;
 }
+.uploadbox {
+  border: 2px dashed black;
+  height: 350px;
+  width: 100%;
+  position: relative; /* Add this */
+}
+
+.custom-post-btn {
+  padding: 10px 30px;
+  border-radius: 9999px;
+  border-color: black;
+  background-color: rgb(236, 14, 88);
+  color: white;
+  font-size: large;
+}
+
+.dropZoneOverlay,
+.FileUpload {
+  width: 100%;
+  height: 100%;
+}
+
+.popUp {
+  margin: 5% 0;
+}
+
+@media (max-width: 420px) {
+  .popUp {
+    margin: 20% 0;
+  }
+}
+@media (max-width: 300px) {
+  .popUp {
+    margin: 0;
+  }
+}
+
+.dropZoneContainer {
+  font-family: cursive;
+  color: #7066fb;
+}
+.dropzoneOverlay {
+  position: absolute;
+  border: dotted 1px;
+  font-size: small;
+  text-align: center;
+}
+.FileUpload {
+  opacity: 0;
+  position: absolute; /* Change this from "relative" to "absolute" */
+  width: 100%; /* Add this */
+  top: 0%;
+  left: 0%;
+  height: 100%; /* Add this */
+  z-index: 1;
+}

@@ -9,6 +9,11 @@ const Profile = () => {
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
+
+  const [showPost, setShowPost] = useState(false);
+
+  const handlePostClose = () => setShowPost(false);
+  const handlePostShow = () => setShowPost(true);
   return (
     <div>
       <div className='container my-4 shadow'>
@@ -44,10 +49,17 @@ const Profile = () => {
               </div>
             </div>
             <div className=' d-flex my-md-4 mx-md-5 my-3 justify-content-evenly align-self-md-end text-center '>
-              <button type='' className='custom-btn shadow py-3 mx-md-3'>
+              <button
+                type=''
+                className='custom-btn shadow py-3 px-md-4 mx-md-0'
+              >
                 Edit Profile
               </button>
-              <button type='' className='custom-btn shadow py-3  mx-md-3'>
+              <button
+                type=''
+                className='custom-btn shadow py-3 px-md-4 mx-md-3'
+                onClick={handlePostShow}
+              >
                 Upload Post
               </button>
             </div>
@@ -168,7 +180,7 @@ const Profile = () => {
                   Edit Post
                 </Dropdown.Item>
                 <Dropdown.Item>
-                  <i class='fa fa-trash pe-2'></i>
+                  <i className='fa fa-trash pe-2'></i>
                   Delete Post
                 </Dropdown.Item>
               </Dropdown.Menu>
@@ -277,6 +289,83 @@ const Profile = () => {
                   </div>
                   <p className='fw-bold'>580 Likes</p>
                 </div>
+              </div>
+            </div>
+          </Modal.Body>
+        </Modal>
+
+        <Modal
+          show={showPost}
+          onHide={handlePostClose}
+          className='popUp'
+          size='lg'
+        >
+          <Modal.Header closeButton>
+            <span>Upload Post</span>
+          </Modal.Header>
+
+          <Modal.Body>
+            <div className='row'>
+              <div className='col-md-6'>
+                <div className='uploadbox d-flex justify-content-center'>
+                  <h4 className='d-flex align-items-center'>
+                    <div className='dropzoneContainer text-center'>
+                      <input
+                        type='file'
+                        id='drop_zone'
+                        className='FileUpload'
+                        accept='.jpg, png,.gif'
+                        onchange='handleFileSelect(this) '
+                      />
+
+                      <i
+                        class='fa fa-cloud-upload fs-1 mb-2'
+                        aria-hidden='true'
+                      ></i>
+                      <div className='dropZoneOverlay text-center fs-5 '>
+                        Drag and drop your image <br />
+                        or
+                        <br />
+                        Click to add
+                      </div>
+                    </div>
+                  </h4>
+                </div>
+              </div>
+              <div className='col-md-6 py-4 py-md-0 d-flex justify-content-between flex-column'>
+                <div className=' '>
+                  <div className='form-floating mb-3'>
+                    <textarea
+                      type='text'
+                      className='form-control'
+                      id='floatingInput'
+                      placeholder='Add Caption'
+                    />
+                    <label for='floatingInput'>Add Caption</label>
+                  </div>
+                  <div className='form-floating mb-3'>
+                    <input
+                      type='text'
+                      className='form-control'
+                      id='floatingInput'
+                      placeholder='Add Location'
+                    />
+                    <label for='floatingInput'>
+                      <i
+                        className='fa fa-location-arrow'
+                        aria-hidden='true'
+                      ></i>{' '}
+                      Add Location
+                    </label>
+                  </div>
+                </div>
+                <button
+                  type=''
+                  className='custom-post-btn shadow float-end '
+                  onClick={handlePostShow}
+                >
+                  Post
+                </button>
               </div>
             </div>
           </Modal.Body>

@@ -1,7 +1,9 @@
 .login-container {
   font-family: 'Poppins', sans-serif;
   margin-top: 13rem;
+  min-height: 100vh;
 }
+
 .input-bg {
   background-color: #f3f3f3;
   color: #dbd5d5;
