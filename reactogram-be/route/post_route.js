@@ -116,5 +116,27 @@ router.put('/unlike', protectedRoute, (req, res) => {
       }
     });
 });
+router.put('/comment', protectedRoute, (req, res) => {
+  const comment = {
+    commentText: req.body.commentText,
+    commentedBy: req.body._id,
+  };
+  PostModel.findByIdAndUpdate(
+    req.body.postId,
+    { $push: { comments: comment } },
+    {
+      new: true, //return updtaed record
+    }
+  )
+    .populate('comments.commentedBy', '_id fullName') // comment owner
+    .populate('author', '_id fullName') // post owner
+    .then((result) => {
+      if (result) {
+        res.json(result);
+      } else {
+        return res.status(400).json({ error: err });
+      }
+    });
+});
 
 module.exports = router;
