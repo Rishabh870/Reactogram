@@ -10,13 +10,8 @@ export const userReducer = (state = initialState, action) => {
         user: action.payload,
       };
     case 'LOGIN_ERROR':
-      return {
-        initialState,
-      };
-
+      return initialState;
     default:
-      return {
-        initialState,
-      };
+      return state;
   }
 };
