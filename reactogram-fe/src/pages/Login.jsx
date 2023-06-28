@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import socialDesktop from '../images/social-desktop.PNG';
 import socialMobile from '../images/social-mobile.PNG';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import '../pages/login.css';
+import { useDispatch } from 'react-redux';
 import axios from 'axios';
 import { API_BASE_URL } from '../../src/config';
 import Swal from 'sweetalert2';
@@ -12,6 +13,9 @@ const Login = () => {
   const [password, setPassword] = useState('');
 
   const [loading, setLoading] = useState(false);
+
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const login = (event) => {
     event.preventDefault();
     setLoading(true);
@@ -23,10 +27,11 @@ const Login = () => {
         debugger;
         if (result.status == 200) {
           setLoading(false);
-          Swal.fire({
-            icon: 'success',
-            title: 'Login Successfully',
-          });
+          localStorage.setItem('token', result.data.result.token);
+          localStorage.setItem('user', JSON.stringify(result.data.result.user));
+          dispatch({ type: 'LOGIN_SUCCESS', payload: result.data.result.user });
+          setLoading(false);
+          navigate('/myprofile');
         }
         setEmail('');
         setPassword('');

@@ -1,39 +1,96 @@
-import React from 'react';
-import profilePhoto from '../images/social-mobile.PNG';
-import cardImage from '../images/social-mobile.PNG';
+import React, { useState } from 'react';
 import './cards.css';
+import { useSelector } from 'react-redux';
+import Swal from 'sweetalert2';
+import axios from 'axios';
+import { API_BASE_URL } from '../../src/config';
+const Cards = (props) => {
+  const user = useSelector((state) => state.userReducer);
+  const [comment, setComment] = useState('');
+  const [commentBox, setCommentBox] = useState(false);
+  // console.log(props.postData.author._id);
+  // console.log(user);
 
-const Cards = () => {
+  const CONFIG_OBJ = {
+    headers: {
+      'Content-Type': ' application/json',
+      Authorization: 'Bearer ' + localStorage.getItem('token'),
+    },
+  };
+
+  const likePost = async (postId, type) => {
+    const request = { postId: postId };
+    const response = await axios.put(
+      `${API_BASE_URL}/${type}`,
+      request,
+      CONFIG_OBJ
+    );
+    if (response.status === 200) {
+      props.getAllPosts();
+    }
+  };
+
+  const submitComment = async (postId) => {
+    setCommentBox(false);
+    const request = {
+      postId: postId,
+      commentText: comment,
+      // commentedBy: comment.commentedBy.fullName,
+    };
+    const response = await axios.put(
+      `${API_BASE_URL}/comment`,
+      request,
+      CONFIG_OBJ
+    );
+    if (response.status === 200) {
+      props.getAllPosts();
+    }
+  };
+
+  const isPostLiked = props.postData.likes.includes(user.user._id);
+
+  console.log(props.postData);
+
   return (
     <div>
-      <div className='card m-3 pt-2' style={{ maxWidth: '400px' }}>
+      <div className='card pt-2'>
         <div className='card-header bg-transparent border-0 px-3 '>
           <div className='row'>
             <div className='col-8'>
               <img
-                src='https://images.unsplash.com/photo-1681967712041-9f274b3ee850?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1075&q=80'
+                src={props.postData.author.profileImg}
                 alt='Profile'
                 className='rounded-circle me-2 float-start'
                 width='65px'
                 height='65px'
               />
               <div className='card-head p-2 '>
-                <p className='card-title mb-1 fs-6 fw-bold'>Rishu</p>
+                <p className='card-title mb-1 fs-6 fw-bold'>
+                  {props.postData.author.fullName}
+                </p>
                 <p className='card-text location text-muted'>
-                  Raipur,Chhattisghar
+                  {props.postData.location}
                 </p>
               </div>
             </div>
             <div className='col-4 d-flex align-content-center justify-content-end'>
-              <button type='button' className='btn btn-link text-muted   '>
-                <i className='fa-solid fa-ellipsis-vertical'></i>
-              </button>
+              {props.postData.author._id === user.user._id ? (
+                <button
+                  onClick={() => props.deletePost(props.postData._id)}
+                  type='button'
+                  className='btn btn-link text-muted   '
+                >
+                  <i className='fa-solid fa-ellipsis-vertical'></i>
+                </button>
+              ) : (
+                ''
+              )}
             </div>
           </div>
         </div>
         <div className='px-3 py-2'>
           <img
-            src='https://images.unsplash.com/photo-1680320564291-cd46d3fc21e6?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1471&q=80'
+            src={props.postData.image}
             alt='Posts'
             height='350px'
             width='350px'
@@ -44,26 +101,81 @@ const Cards = () => {
           <div className='d-flex justify-content-between '>
             <div className='d-flex'>
               <div className='me-1'>
-                <button type='button' className='card-icons '>
-                  <i className='fa-regular fa-heart'></i>
+                <button
+                  onClick={
+                    isPostLiked
+                      ? null
+                      : () => likePost(props.postData._id, 'like')
+                  }
+                  type='button'
+                  className='card-icons '
+                >
+                  <i className='fa fa-thumbs-up'></i>
                 </button>
               </div>
-              <div className='me-1'>
+              <div
+                className='me-1'
+                onClick={() => likePost(props.postData._id, 'unlike')}
+              >
                 <button type='button' className=' card-icons'>
-                  <i className='fa fa-regular fa-comment'></i>
+                  <i class='fa fa-thumbs-down' aria-hidden='true'></i>
                 </button>
               </div>
               <div className='me-5'>
-                <button type='button' className='card-icons '>
-                  <i className='fa fa-share'></i>
+                <button
+                  onClick={() =>
+                    commentBox ? setCommentBox(false) : setCommentBox(true)
+                  }
+                  type='button'
+                  className='card-icons '
+                >
+                  <i className='fa fa-comment'></i>
                 </button>
               </div>
             </div>
             <div className=' float-end'>
-              <span className=''>580 Likes</span>
+              <span className=''>{props.postData.likes.length} Likes</span>
             </div>
           </div>
-          <p className='card-text px-1 mt-2'>2 hours ago</p>
+          {commentBox ? (
+            <div className='row'>
+              <div className='col-9'>
+                <textarea
+                  onChange={(e) => {
+                    setComment(e.target.value);
+                  }}
+                  className='card-text px-1 mt-2'
+                  placeholder='Comment'
+                ></textarea>
+              </div>
+              <div className='col-3'>
+                <button
+                  onClick={() => {
+                    submitComment(props.postData._id);
+                  }}
+                  className='card-text px-1 mt-2'
+                >
+                  Submit
+                </button>
+              </div>
+            </div>
+          ) : null}
+          {props.postData.comments.map((comment) => {
+            return (
+              <div className='row'>
+                <div className='col-12'>
+                  <p className='card-text px-1 mt-2'>
+                    {comment.commentText}-{comment.commentedBy.fullName}
+                  </p>
+                </div>
+              </div>
+            );
+          })}
+          <div className='row'>
+            <div className='col-12'>
+              <p className='card-text px-1 mt-2'>2 hours ago</p>
+            </div>
+          </div>
         </div>
       </div>
     </div>

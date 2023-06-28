@@ -23,7 +23,6 @@ const Signup = () => {
     axios
       .post(`${API_BASE_URL}/signup`, requestData)
       .then((result) => {
-        debugger;
         if (result.status == 201) {
           setLoading(false);
           Swal.fire({

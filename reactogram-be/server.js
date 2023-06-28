@@ -5,6 +5,7 @@ const { MONGODB_URL } = require('./config');
 const app = express();
 const port = 5000;
 
+global.__basedir = __dirname;
 mongoose.connect(MONGODB_URL, {
   useNewUrlParser: true,
   useUnifiedTopology: true,

@@ -49,7 +49,7 @@ router.post('/signup', (req, res) => {
 });
 
 router.post('/login', (req, res) => {
-  const { email, password } = req.body;
+  const { _id, email, password } = req.body;
   if (!password || !email) {
     return res.status(400).json({
       error: 'One or more mandatory fields are empty',
@@ -67,6 +67,7 @@ router.post('/login', (req, res) => {
           if (didMatch) {
             const jwtToken = jwt.sign({ _id: userInDB._id }, JWT_SECRET);
             const userInfo = {
+              _id: userInDB._id,
               email: userInDB.email,
               fullName: userInDB.fullName,
             };

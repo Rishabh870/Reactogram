@@ -1,19 +1,120 @@
-import React, { useState } from 'react';
-import { Modal, Dropdown, ToggleButton, DropdownButton } from 'react-bootstrap';
-
+import React, { useEffect, useState } from 'react';
+import { Modal, Dropdown } from 'react-bootstrap';
+import axios from 'axios';
+import { API_BASE_URL } from '../../src/config';
+import { useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 import '../pages/profile.css';
-import DropdownToggle from 'react-bootstrap/esm/DropdownToggle';
+import Swal from 'sweetalert2';
 
 const Profile = () => {
+  const navigate = useNavigate();
+  const user = useSelector((state) => state.userReducer);
+  console.log(user);
+  const [postDetail, setPostDetail] = useState({});
+
+  const [loading, setLoading] = useState(false);
+  const [allPost, setAllPost] = useState([]);
+
   const [show, setShow] = useState(false);
+  const [image, setImage] = useState({ preview: '', data: '' });
+
+  const [caption, setCaption] = useState('');
+  const [location, setLocation] = useState('');
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
   const [showPost, setShowPost] = useState(false);
 
+  const handleFileSelect = (event) => {
+    const img = {
+      preview: URL.createObjectURL(event.target.files[0]),
+      data: event.target.files[0],
+    };
+    setImage(img);
+  };
   const handlePostClose = () => setShowPost(false);
   const handlePostShow = () => setShowPost(true);
+
+  const CONFIG_OBJ = {
+    headers: {
+      'Content-Type': ' application/json',
+      Authorization: 'Bearer ' + localStorage.getItem('token'),
+    },
+  };
+
+  const handleImageUpload = async () => {
+    let formData = new FormData();
+    // console.log(image.data);
+    formData.append('file', image.data);
+    const response = await axios.post(`${API_BASE_URL}/uploadFile`, formData);
+    return response;
+  };
+
+  const addPost = async () => {
+    if (image.preview === '') {
+      Swal.fire({ icon: 'error', title: 'Post is Mandatory' });
+    } else if (caption === '') {
+      Swal.fire({ icon: 'error', title: 'Caption is Mandatory' });
+    } else if (location === '') {
+      Swal.fire({ icon: 'error', title: 'location is Mandatory' });
+    } else {
+      setLoading(true);
+      const imgRes = await handleImageUpload();
+      const request = {
+        description: caption,
+        location: location,
+        image: `${API_BASE_URL}/files/${imgRes.data.fileName}`,
+      };
+      // console.log(request);
+      // write api call to create post
+      const postResponse = await axios.post(
+        `${API_BASE_URL}/createpost`,
+        request,
+        CONFIG_OBJ
+      );
+      setLoading(false);
+      if (postResponse.status == 201) {
+        navigate('/post');
+      } else {
+        Swal.fire({
+          icon: 'error',
+          title: 'Some error occurred while creating post',
+        });
+      }
+    }
+  };
+
+  const getMyAllPosts = async () => {
+    const response = await axios.get(`${API_BASE_URL}/myallposts`, CONFIG_OBJ);
+    // console.log(response);
+    if (response.status === 200) {
+      setAllPost(response.data.posts);
+    } else {
+      Swal.fire({ icon: 'error', title: 'some error occur' });
+    }
+  };
+
+  useEffect(() => {
+    getMyAllPosts();
+  }, []);
+
+  const showDetail = (post) => {
+    setPostDetail(post);
+  };
+
+  const deletePost = async (postId) => {
+    const response = await axios.delete(
+      `${API_BASE_URL}/deletepost/${postId}`,
+      CONFIG_OBJ
+    );
+    if (response.status === 200) {
+      getMyAllPosts();
+      handleClose();
+    }
+  };
+
   return (
     <div>
       <div className='container my-4 shadow'>
@@ -27,8 +128,8 @@ const Profile = () => {
               height='150'
             />
             <div className='my-4 mx-2'>
-              <p className='fw-bold'>Rishu_870</p>
-              <p className=''>Rishabh Parth</p>
+              <p className='fw-bold'>{user.user.email}</p>
+              <p className=''>{user.user.fullName}</p>
               <p className=''>Web Developer</p>
               <p className=''>My Portfolio on linkedin</p>
             </div>
@@ -36,7 +137,7 @@ const Profile = () => {
           <div className=' col-md-6 d-flex justify-content-between p-0 flex-column'>
             <div className='d-flex justify-content-md-end justify-content-evenly px-md-4 text-center'>
               <div className=' border-end px-md-5 px-4'>
-                <h4>10</h4>
+                <h4>{allPost.length}</h4>
                 <p>Posts</p>
               </div>
               <div className=' border-end px-md-5 px-4'>
@@ -71,96 +172,30 @@ const Profile = () => {
           </div>
         </div>
         <div className='row d-flex justify-content-evenly py-md-5 py-3 px-2 '>
-          <div
-            className='col-md-4 col-sm-12 p-3'
-            onClick={handleShow}
-            style={{ height: '20rem' }}
-          >
-            <div className='card p-0' style={{ width: '100%', height: '100%' }}>
-              <img
-                src='https://images.unsplash.com/photo-1682844924084-f613cf669e73?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1632&q=80'
-                className='card-img-top'
-                width='100%'
-                height='100%'
-                alt='posts'
-              />
-            </div>
-          </div>
-          <div
-            className='col-md-4 col-sm-12 p-3'
-            onClick={handleShow}
-            style={{ height: '20rem' }}
-          >
-            <div className='card p-0' style={{ width: '100%', height: '100%' }}>
-              <img
-                src='https://images.unsplash.com/photo-1682844924084-f613cf669e73?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1632&q=80'
-                className='card-img-top'
-                width='100%'
-                height='100%'
-                alt='posts'
-              />
-            </div>
-          </div>
-          <div
-            className='col-md-4 col-sm-12 p-3'
-            onClick={handleShow}
-            style={{ height: '20rem' }}
-          >
-            <div className='card p-0' style={{ width: '100%', height: '100%' }}>
-              <img
-                src='https://images.unsplash.com/photo-1682844924084-f613cf669e73?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1632&q=80'
-                className='card-img-top'
-                width='100%'
-                height='100%'
-                alt='posts'
-              />
-            </div>
-          </div>
-          <div
-            className='col-md-4 col-sm-12 p-3'
-            onClick={handleShow}
-            style={{ height: '20rem' }}
-          >
-            <div className='card p-0' style={{ width: '100%', height: '100%' }}>
-              <img
-                src='https://images.unsplash.com/photo-1682844924084-f613cf669e73?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1632&q=80'
-                className='card-img-top'
-                width='100%'
-                height='100%'
-                alt='posts'
-              />
-            </div>
-          </div>
-          <div
-            className='col-md-4 col-sm-12 p-3'
-            onClick={handleShow}
-            style={{ height: '20rem' }}
-          >
-            <div className='card p-0' style={{ width: '100%', height: '100%' }}>
-              <img
-                src='https://images.unsplash.com/photo-1682844924084-f613cf669e73?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1632&q=80'
-                className='card-img-top'
-                width='100%'
-                height='100%'
-                alt='posts'
-              />
-            </div>
-          </div>
-          <div
-            className='col-md-4 col-sm-12 p-3'
-            onClick={handleShow}
-            style={{ height: '20rem' }}
-          >
-            <div className='card p-0' style={{ width: '100%', height: '100%' }}>
-              <img
-                src='https://images.unsplash.com/photo-1682844924084-f613cf669e73?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1632&q=80'
-                className='card-img-top'
-                width='100%'
-                height='100%'
-                alt='posts'
-              />
-            </div>
-          </div>
+          {allPost.map((post) => {
+            return (
+              <div
+                className='col-md-4 col-sm-12 p-3'
+                onClick={handleShow}
+                style={{ height: '20rem' }}
+                key={post._id}
+              >
+                <div
+                  className='card p-0'
+                  style={{ width: '100%', height: '100%' }}
+                >
+                  <img
+                    src={post.image}
+                    onClick={() => showDetail(post)}
+                    className='card-img-top'
+                    width='100%'
+                    height='100%'
+                    alt='posts'
+                  />
+                </div>
+              </div>
+            );
+          })}
         </div>
 
         <Modal show={show} onHide={handleClose} size='lg'>
@@ -179,7 +214,7 @@ const Profile = () => {
                   <i className='fa-solid fa-pen-to-square pe-2'></i>
                   Edit Post
                 </Dropdown.Item>
-                <Dropdown.Item>
+                <Dropdown.Item onClick={() => deletePost(postDetail._id)}>
                   <i className='fa fa-trash pe-2'></i>
                   Delete Post
                 </Dropdown.Item>
@@ -195,7 +230,7 @@ const Profile = () => {
                     <div className='carousel-inner'>
                       <div className='carousel-item active'>
                         <img
-                          src='https://images.unsplash.com/photo-1682844924084-f613cf669e73?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1632&q=80'
+                          src={postDetail.image}
                           className='d-block w-100'
                           alt='...'
                         />
@@ -252,9 +287,11 @@ const Profile = () => {
                     height='65px'
                   />
                   <div className='card-head p-2 '>
-                    <p className='card-title mb-1 fs-6 fw-bold'>Rishu</p>
+                    <p className='card-title mb-1 fs-6 fw-bold'>
+                      {postDetail.location}
+                    </p>
                     <p className='card-text location text-muted'>
-                      Raipur,Chhattisghar
+                      {postDetail.description}
                     </p>
                   </div>
                 </div>
@@ -311,22 +348,30 @@ const Profile = () => {
                   <h4 className='d-flex align-items-center'>
                     <div className='dropzoneContainer text-center'>
                       <input
+                        name='file'
                         type='file'
                         id='drop_zone'
                         className='FileUpload'
                         accept='.jpg, png,.gif'
-                        onchange='handleFileSelect(this) '
+                        onChange={handleFileSelect}
                       />
 
-                      <i
-                        class='fa fa-cloud-upload fs-1 mb-2'
-                        aria-hidden='true'
-                      ></i>
                       <div className='dropZoneOverlay text-center fs-5 '>
-                        Drag and drop your image <br />
-                        or
-                        <br />
-                        Click to add
+                        {image.preview ? (
+                          <img src={image.preview} width={150} height={150} />
+                        ) : (
+                          <>
+                            <i
+                              class='fa fa-cloud-upload fs-1 mb-2'
+                              aria-hidden='true'
+                            ></i>
+                            <br />
+                            Drag and drop your image <br />
+                            or
+                            <br />
+                            Click to add
+                          </>
+                        )}
                       </div>
                     </div>
                   </h4>
@@ -339,6 +384,7 @@ const Profile = () => {
                       type='text'
                       className='form-control'
                       id='floatingInput'
+                      onChange={(e) => setCaption(e.target.value)}
                       placeholder='Add Caption'
                     />
                     <label for='floatingInput'>Add Caption</label>
@@ -346,6 +392,7 @@ const Profile = () => {
                   <div className='form-floating mb-3'>
                     <input
                       type='text'
+                      onChange={(e) => setLocation(e.target.value)}
                       className='form-control'
                       id='floatingInput'
                       placeholder='Add Location'
@@ -362,7 +409,7 @@ const Profile = () => {
                 <button
                   type=''
                   className='custom-post-btn shadow float-end '
-                  onClick={handlePostShow}
+                  onClick={() => addPost()}
                 >
                   Post
                 </button>

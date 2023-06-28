@@ -9,6 +9,7 @@ const protectedRoute = require('../middleware/protectedResource');
 router.get('/allposts', (req, res) => {
   PostModel.find()
     .populate('author', '_id fullName profileImg')
+    .populate('comments.commentedBy', '_id fullName')
     .then((dbPosts) => {
       res.status(200).json({ posts: dbPosts });
     })
@@ -85,17 +86,18 @@ router.put('/like', protectedRoute, (req, res) => {
   PostModel.findByIdAndUpdate(
     req.body.postId,
     { $push: { likes: req.user._id } },
-    {
-      new: true, //return updtaed record
-    }
+    { new: true } // return updated record
   )
     .populate('author', '_id fullName')
-    .then((err, result) => {
+    .then((result) => {
       if (result) {
         res.json(result);
       } else {
-        return res.status(400).json({ error: err });
+        return res.status(400).json({ error: 'Unable to update post.' });
       }
+    })
+    .catch((err) => {
+      return res.status(400).json({ error: err.message });
     });
 });
 
@@ -103,23 +105,25 @@ router.put('/unlike', protectedRoute, (req, res) => {
   PostModel.findByIdAndUpdate(
     req.body.postId,
     { $pull: { likes: req.user._id } },
-    {
-      new: true, //return updtaed record
-    }
+    { new: true } // return updated record
   )
     .populate('author', '_id fullName')
-    .then((err, result) => {
+    .then((result) => {
       if (result) {
         res.json(result);
       } else {
-        return res.status(400).json({ error: err });
+        return res.status(400).json({ error: 'Unable to update post.' });
       }
+    })
+    .catch((err) => {
+      return res.status(400).json({ error: err.message });
     });
 });
+
 router.put('/comment', protectedRoute, (req, res) => {
   const comment = {
     commentText: req.body.commentText,
-    commentedBy: req.body._id,
+    commentedBy: req.user._id,
   };
   PostModel.findByIdAndUpdate(
     req.body.postId,
